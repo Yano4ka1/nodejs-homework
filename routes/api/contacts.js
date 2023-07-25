@@ -1,25 +1,22 @@
-const express = require('express')
+const express = require('express');
 
-const router = express.Router()
+const { getAllContacts, getContactById, addContact, deleteContact, updateContact, updateStatusContact } = require('../../controllers');
+const {tryCatchWrapper} = require('../../middlewares/tryCatchWrapper');
+const {auth} = require('../../middlewares/auth');
+const { contactPostSchema, contactsPatchSchema } = require('../../schemas/contactSchema');
 
-router.get('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+const router = express.Router();
 
-router.get('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/', auth, tryCatchWrapper(getAllContacts));
 
-router.post('/', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.get('/:contactId', auth, tryCatchWrapper(getContactById));
 
-router.delete('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.post('/', auth, contactPostSchema, tryCatchWrapper(addContact))
 
-router.put('/:contactId', async (req, res, next) => {
-  res.json({ message: 'template message' })
-})
+router.delete('/:contactId', auth, tryCatchWrapper(deleteContact))
 
-module.exports = router
+router.put('/:contactId', auth, contactPostSchema, tryCatchWrapper(updateContact))
+
+router.patch('/:contactId/favorite', auth, contactsPatchSchema, tryCatchWrapper(updateStatusContact))
+
+module.exports = router;
